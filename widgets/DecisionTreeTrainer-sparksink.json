@@ -18,7 +18,7 @@
         },
         {
           "widget-type": "csv",
-          "label": "Features to Include for training",
+          "label": "Features to Include for Training",
           "name": "featureFieldsToInclude",
           "widget-attributes": {
             "delimiter": ",",
@@ -27,7 +27,7 @@
         },
         {
           "widget-type": "csv",
-          "label": "Features to Exclude while training",
+          "label": "Features to Exclude while Training",
           "name": "featureFieldsToExclude",
           "widget-attributes": {
             "delimiter": ",",
@@ -58,7 +58,7 @@
         },
         {
           "widget-type": "number",
-          "label": "Maximum number of Bins",
+          "label": "Maximum Number of Bins",
           "name": "maxBins",
           "widget-attributes": {
             "default": "100",
