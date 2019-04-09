@@ -16,6 +16,7 @@
 
 package co.cask.hydrator.plugin;
 
+import co.cask.cdap.api.artifact.ArtifactSummary;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.api.dataset.table.Table;
@@ -29,8 +30,8 @@ import co.cask.cdap.etl.mock.test.HydratorTestBase;
 import co.cask.cdap.etl.proto.v2.ETLBatchConfig;
 import co.cask.cdap.etl.proto.v2.ETLPlugin;
 import co.cask.cdap.etl.proto.v2.ETLStage;
+import co.cask.cdap.proto.ProgramRunStatus;
 import co.cask.cdap.proto.artifact.AppRequest;
-import co.cask.cdap.proto.artifact.ArtifactSummary;
 import co.cask.cdap.proto.id.ApplicationId;
 import co.cask.cdap.proto.id.ArtifactId;
 import co.cask.cdap.proto.id.NamespaceId;
@@ -124,8 +125,8 @@ public class DecisionTreeRegressionTest extends HydratorTestBase {
       .build();
 
     AppRequest<ETLBatchConfig> appRequest = new AppRequest<>(DATAPIPELINE_ARTIFACT, etlConfig);
-    ApplicationId appId = NamespaceId.DEFAULT.app("SinglePhaseApp");
-    ApplicationManager appManager = deployApplication(appId.toId(), appRequest);
+    ApplicationId appId = NamespaceId.DEFAULT.app("SinglePhaseAppSparkSink");
+    ApplicationManager appManager = deployApplication(appId, appRequest);
 
     // send records from sample data to train the model
     List<StructuredRecord> messagesToWrite = new ArrayList<>();
@@ -138,7 +139,7 @@ public class DecisionTreeRegressionTest extends HydratorTestBase {
     // manually trigger the pipeline
     WorkflowManager workflowManager = appManager.getWorkflowManager(SmartWorkflow.NAME);
     workflowManager.start();
-    workflowManager.waitForFinish(5, TimeUnit.MINUTES);
+    workflowManager.waitForRun(ProgramRunStatus.COMPLETED, 5, TimeUnit.MINUTES);
   }
 
   //Get data from file to be used for training the model.
@@ -183,8 +184,8 @@ public class DecisionTreeRegressionTest extends HydratorTestBase {
       .build();
 
     AppRequest<ETLBatchConfig> appRequest = new AppRequest<>(DATAPIPELINE_ARTIFACT, etlConfig);
-    ApplicationId appId = NamespaceId.DEFAULT.app("SinglePhaseApp");
-    ApplicationManager appManager = deployApplication(appId.toId(), appRequest);
+    ApplicationId appId = NamespaceId.DEFAULT.app("SinglePhaseAppSparkCompute");
+    ApplicationManager appManager = deployApplication(appId, appRequest);
 
     // Flight records to be labeled.
     Set<StructuredRecord> messagesToWrite = new HashSet<>();
@@ -207,7 +208,7 @@ public class DecisionTreeRegressionTest extends HydratorTestBase {
     // manually trigger the pipeline
     WorkflowManager workflowManager = appManager.getWorkflowManager(SmartWorkflow.NAME);
     workflowManager.start();
-    workflowManager.waitForFinish(5, TimeUnit.MINUTES);
+    workflowManager.waitForRun(ProgramRunStatus.COMPLETED, 5, TimeUnit.MINUTES);
 
     DataSetManager<Table> labeledTexts = getDataset(LABELED_RECORDS);
     List<StructuredRecord> structuredRecords = MockSink.readOutput(labeledTexts);
@@ -257,7 +258,7 @@ public class DecisionTreeRegressionTest extends HydratorTestBase {
 
     AppRequest<ETLBatchConfig> appRequest = new AppRequest<>(DATAPIPELINE_ARTIFACT, etlConfig);
     ApplicationId appId = NamespaceId.DEFAULT.app("SinglePhaseApp");
-    ApplicationManager appManager = deployApplication(appId.toId(), appRequest);
+    ApplicationManager appManager = deployApplication(appId, appRequest);
 
     // send records from sample data to train the model
     List<StructuredRecord> messagesToWrite = new ArrayList<>();
@@ -270,9 +271,7 @@ public class DecisionTreeRegressionTest extends HydratorTestBase {
     // manually trigger the pipeline
     WorkflowManager workflowManager = appManager.getWorkflowManager(SmartWorkflow.NAME);
     workflowManager.start();
-    workflowManager.waitForFinish(5, TimeUnit.MINUTES);
-
-    Assert.assertEquals("FAILED", workflowManager.getHistory().get(0).getStatus().name());
+    workflowManager.waitForRun(ProgramRunStatus.FAILED, 5, TimeUnit.MINUTES);
   }
 
   private Schema getTrainerSchema(Schema schema) {
