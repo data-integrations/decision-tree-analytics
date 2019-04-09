@@ -14,12 +14,12 @@
  * the License.
  */
 
-package co.cask.hydrator.plugin;
+package io.cdap.plugin;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.annotation.Plugin;
-import co.cask.cdap.etl.api.batch.SparkCompute;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Name;
+import io.cdap.cdap.api.annotation.Plugin;
+import io.cdap.cdap.etl.api.batch.SparkCompute;
 import org.apache.spark.SparkContext;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
