@@ -62,7 +62,8 @@ import java.util.concurrent.TimeUnit;
 public class DecisionTreeRegressionTest extends HydratorTestBase {
 
   @ClassRule
-  public static final TestConfiguration CONFIG = new TestConfiguration("explore.enabled", false);
+  public static final TestConfiguration CONFIG = new TestConfiguration("explore.enabled", false,
+                                                                       "app.program.spark.compat", "spark2_2.11");
 
   protected static final ArtifactId DATAPIPELINE_ARTIFACT_ID = NamespaceId.DEFAULT.artifact("data-pipeline", "4.0.0");
   protected static final ArtifactSummary DATAPIPELINE_ARTIFACT = new ArtifactSummary("data-pipeline", "4.0.0");
